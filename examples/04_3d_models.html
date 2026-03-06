@@ -45,7 +45,8 @@
     <!-- Preload 3D model asset
          Replace ../assets/sample.glb with your own GLB file -->
     <a-assets>
-      <a-asset-item id="model" src="../assets/sample.glb"></a-asset-item>
+      <a-asset-item id="model1" src="../assets/plant_modelling.glb"></a-asset-item>
+      <a-asset-item id="model2" src="../assets/satanim3.glb"></a-asset-item>
     </a-assets>
 
     <a-camera position="0 4 10"></a-camera>
@@ -56,9 +57,13 @@
            - gltf-model: loads the GLB file
            - animation-mixer: plays all embedded animations on loop
            - Adjust scale and position to fit your model -->
-      <a-entity gltf-model="#model"
-                animation-mixer="clip: *; loop: repeat"
-                position="0 0 0"
+      <a-entity gltf-model="#model1"
+                position="-0.5  0 0"
+                scale="0.5 0.5 0.5">
+      </a-entity>
+
+            <a-entity gltf-model="#model2"
+                position="0.5  0 0"
                 scale="0.5 0.5 0.5">
       </a-entity>
 
