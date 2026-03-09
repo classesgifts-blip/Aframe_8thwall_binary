@@ -21,7 +21,7 @@
           {
             "name": "poster-a",
             "type": "PLANAR",
-            "imagePath": "../assets/1000055040bw-resize-640x480.jpg",
+            "imagePath": "../assets/Target_1000055040bw-resize-640x480.jpg",
             "properties": {
               "left": 0, "top": 0,
               "width": 480, "height": 640,
@@ -32,11 +32,33 @@
           {
             "name": "poster-b",
             "type": "PLANAR",
-            "imagePath": "../assets/target-b.jpg",
+            "imagePath": "../assets/Target_cat_640.jpg",
             "properties": {
               "left": 0, "top": 0,
-              "width": 480, "height": 640,
+              "width": 480, "height": 646,
               "originalWidth": 480, "originalHeight": 640,
+              "isRotated": false
+            }
+          },
+          {
+            "name": "poster-c",
+            "type": "PLANAR",
+            "imagePath": "../assets/Target_snowflakes_640.jpg",
+            "properties": {
+              "left": 0, "top": 0,
+              "width": 478, "height": 640,
+              "originalWidth": 480, "originalHeight": 640,
+              "isRotated": false
+            }
+          },
+          {
+            "name": "poster-d",
+            "type": "PLANAR",
+            "imagePath": "../assets/Target_dragonfly_640_640.jpg",
+            "properties": {
+              "left": 0, "top": 0,
+              "width": 640, "height": 640,
+              "originalWidth": 640, "originalHeight": 640,
               "isRotated": false
             }
           }
@@ -76,6 +98,28 @@
       <a-text value="Target B" color="white" align="center"
               position="0 1.5 0" width="3"></a-text>
     </xrextras-named-image-target>
+
+    <!-- TARGET C — different AR content for the second image
+    Replace ../assets/target-b.jpg with your own second image target -->
+    <xrextras-named-image-target name="poster-c">
+      <a-sphere color="#FFAAFF" position="0 0.5 0" radius="0.4"
+                animation="property: position; from: 0 0.5 0; to: 0 1.0 0;
+                               loop: true; dur: 1500; dir: alternate; easing: easeInOutQuad">
+      </a-sphere>
+      <a-text value="Target C" color="white" align="center"
+                  position="0 1.5 0" width="3"></a-text>
+      </xrextras-named-image-target>
+
+    <!-- TARGET D — different AR content for the second image
+    Replace ../assets/target-b.jpg with your own second image target -->
+    <xrextras-named-image-target name="poster-d">
+      <a-sphere color="#FF00AA" position="0 0.5 0" radius="0.4"
+                animation="property: position; from: 0 0.5 0; to: 0 1.0 0;
+                               loop: true; dur: 1500; dir: alternate; easing: easeInOutQuad">
+      </a-sphere>
+      <a-text value="Target D" color="white" align="center"
+                  position="0 1.5 0" width="3"></a-text>
+      </xrextras-named-image-target>
 
   </a-scene>
 </body>
