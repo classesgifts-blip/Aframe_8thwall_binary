@@ -15,38 +15,40 @@
   <script>
     AFRAME.registerComponent('sequence-player', {
       init: function () {
-        const target = this.el;
-        const imageEl = document.querySelector('#ar-image');
-        
-        // 定义 5 张图片的资源 ID 数组
+        const targetEl = this.el;
+        const targetName = targetEl.getAttribute('name'); // 获取当前配置的目标名称
         const frames = ['#frame1', '#frame2', '#frame3', '#frame4', '#frame5'];
         let timer = null;
 
-        // 监听扫描到目标图的事件
-        target.addEventListener('xrimagefound', () => {
+        // 监听整个场景的识别事件，这比单纯监听元素更为稳妥
+        this.el.sceneEl.addEventListener('xrimagefound', (event) => {
+          // 确保只在识别到对应的 my-poster 时才触发播放
+          if (event.detail.name !== targetName) return;
+
+          // 在事件触发时动态获取子级 a-image 元素，避免因加载顺序导致找不到元素
+          const imageEl = targetEl.querySelector('a-image');
+          if (!imageEl) return;
+
           let currentFrame = 0;
-          
-          // 每次重新扫描到时，重置为第一张图
           imageEl.setAttribute('src', frames[currentFrame]);
 
-          // 清除可能存在的旧定时器
           if (timer) clearInterval(timer);
 
-          // 开启新定时器，每 300 毫秒 (0.3s) 切换一次
+          // 开启 0.3 秒定时器
           timer = setInterval(() => {
             currentFrame++;
             if (currentFrame < frames.length) {
               imageEl.setAttribute('src', frames[currentFrame]);
             } else {
-              // 播完最后一张后，清除定时器，静止在最后一张
               clearInterval(timer);
               timer = null;
             }
           }, 300);
         });
 
-        // 监听失去追踪的事件
-        target.addEventListener('xrimagelost', () => {
+        // 失去追踪时清理定时器
+        this.el.sceneEl.addEventListener('xrimagelost', (event) => {
+          if (event.detail.name !== targetName) return;
           if (timer) {
             clearInterval(timer);
             timer = null;
@@ -63,11 +65,10 @@
         imageTargetData:[{
           "name": "my-poster",
           "type": "PLANAR",
-          // 扫描的目标图片（这里使用 2.png 开启扫描）
           "imagePath": "../assets/Targets/1.jpg", 
           "properties": {
             "left": 0, "top": 0,
-            "width": 830, "height": 830, // 请根据 2.png 的实际尺寸像素修改
+            "width": 830, "height": 830, 
             "originalWidth": 830, "originalHeight": 830,
             "isRotated": false
           }
@@ -85,9 +86,8 @@
     xrextras-runtime-error
     xrweb="disableWorldTracking: true">
 
-    <!-- 预加载 5 张用于按顺序播放的图片素材 -->
     <a-assets>
-      <!-- 请将下方的 src 路径替换为您在 Firebase/项目中实际存放这 5 张图片的路径 -->
+      <!-- 请确保这里的 5 张图片都是 368x480 尺寸 -->
       <img id="frame1" src="../assets/Targets/1.jpg">
       <img id="frame2" src="../assets/frame2.jpg">
       <img id="frame3" src="../assets/frame3.jpg">
@@ -97,11 +97,10 @@
 
     <a-camera position="0 4 10"></a-camera>
 
-    <!-- 挂载了自定义组件 sequence-player 的图像目标 -->
     <xrextras-named-image-target name="my-poster" sequence-player>
 
-      <!-- 用于显示图片的 a-image 组件 -->
-      <a-image id="ar-image" src="#frame1" position="0 0 0" width="1" height="1"></a-image>
+      <!-- 调整后的 a-image：通过 width="1" height="1.304" 保持 368x480 的比例，不再被压扁 -->
+      <a-image src="#frame1" position="0 0 0" width="1" height="1.304"></a-image>
 
     </xrextras-named-image-target>
 
