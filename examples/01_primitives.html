@@ -11,42 +11,48 @@
   <!-- 8th Wall Engine -->
   <script async src="../engine/xr.js" data-preload-chunks="slam"></script>
 
-  <!-- 注册图片序列播放组件 -->
+  <!-- 注册无缝图片播放组件 -->
   <script>
     AFRAME.registerComponent('sequence-player', {
       init: function () {
         const targetEl = this.el;
-        const targetName = targetEl.getAttribute('name'); // 获取当前配置的目标名称
-        const frames = ['#frame1', '#frame2', '#frame3', '#frame4', '#frame5'];
+        const targetName = targetEl.getAttribute('name');
         let timer = null;
 
-        // 监听整个场景的识别事件，这比单纯监听元素更为稳妥
         this.el.sceneEl.addEventListener('xrimagefound', (event) => {
-          // 确保只在识别到对应的 my-poster 时才触发播放
           if (event.detail.name !== targetName) return;
 
-          // 在事件触发时动态获取子级 a-image 元素，避免因加载顺序导致找不到元素
-          const imageEl = targetEl.querySelector('a-image');
-          if (!imageEl) return;
+          // 获取当前目标下的所有 a-image 元素
+          const images = Array.from(targetEl.querySelectorAll('a-image'));
+          if (images.length === 0) return;
+
+          // 初始状态：全部隐藏
+          images.forEach(img => img.setAttribute('visible', false));
 
           let currentFrame = 0;
-          imageEl.setAttribute('src', frames[currentFrame]);
+          // 显示第一帧
+          images[currentFrame].setAttribute('visible', true);
 
           if (timer) clearInterval(timer);
 
-          // 开启 0.3 秒定时器
+          // 开启定时器，无缝切换 visible 状态
           timer = setInterval(() => {
+            // 隐藏上一帧
+            images[currentFrame].setAttribute('visible', false);
             currentFrame++;
-            if (currentFrame < frames.length) {
-              imageEl.setAttribute('src', frames[currentFrame]);
+
+            if (currentFrame < images.length) {
+              // 显示当前帧
+              images[currentFrame].setAttribute('visible', true);
             } else {
+              // 播放结束，保持显示最后一帧
+              images[images.length - 1].setAttribute('visible', true);
               clearInterval(timer);
               timer = null;
             }
           }, 300);
         });
 
-        // 失去追踪时清理定时器
         this.el.sceneEl.addEventListener('xrimagelost', (event) => {
           if (event.detail.name !== targetName) return;
           if (timer) {
@@ -65,7 +71,7 @@
         imageTargetData:[{
           "name": "my-poster",
           "type": "PLANAR",
-          "imagePath": "../assets/Targets/1.jpg", 
+          "imagePath": "../assets/2.png", 
           "properties": {
             "left": 0, "top": 0,
             "width": 830, "height": 830, 
@@ -87,7 +93,7 @@
     xrweb="disableWorldTracking: true">
 
     <a-assets>
-      <!-- 请确保这里的 5 张图片都是 368x480 尺寸 -->
+      <!-- 【重要】：请仔细核对以下 5 个图片路径，确保在 Firebase 资源管理器中可以正常打开 -->
       <img id="frame1" src="../assets/Targets/1.jpg">
       <img id="frame2" src="../assets/frame2.jpg">
       <img id="frame3" src="../assets/frame3.jpg">
@@ -97,10 +103,15 @@
 
     <a-camera position="0 4 10"></a-camera>
 
+    <!-- 挂载播放组件 -->
     <xrextras-named-image-target name="my-poster" sequence-player>
 
-      <!-- 调整后的 a-image：通过 width="1" height="1.304" 保持 368x480 的比例，不再被压扁 -->
-      <a-image src="#frame1" position="0 0 0" width="1" height="1.304"></a-image>
+      <!-- 创建 5 个重叠的图片层，初始状态均设为 visible="false" -->
+      <a-image src="#frame1" position="0 0 0" width="1" height="1.304" visible="false"></a-image>
+      <a-image src="#frame2" position="0 0 0" width="1" height="1.304" visible="false"></a-image>
+      <a-image src="#frame3" position="0 0 0" width="1" height="1.304" visible="false"></a-image>
+      <a-image src="#frame4" position="0 0 0" width="1" height="1.304" visible="false"></a-image>
+      <a-image src="#frame5" position="0 0 0" width="1" height="1.304" visible="false"></a-image>
 
     </xrextras-named-image-target>
 
